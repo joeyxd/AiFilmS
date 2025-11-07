@@ -1,0 +1,54 @@
+{
+  "timestamp": "2025-09-09T18:48:59.356Z",
+  "openrouter": {
+    "successes": 0,
+    "failures": 3,
+    "results": [
+      {
+        "prompt": "A cute robot painting a landscape on canvas in an art studio, digital art",
+        "success": false,
+        "error": "HTTP 404: {\"error\":{\"message\":\"No endpoints found for google/gemini-2.5-flash-image-preview:free.\",\"code\":404},\"user_id\":\"user_2ooLY3vpIr8sKIoR0bZnWLmkjeN\"}",
+        "responseTime": 701
+      },
+      {
+        "prompt": "A futuristic city at sunset with flying cars, cyberpunk style",
+        "success": false,
+        "error": "HTTP 404: {\"error\":{\"message\":\"No endpoints found for google/gemini-2.5-flash-image-preview:free.\",\"code\":404},\"user_id\":\"user_2ooLY3vpIr8sKIoR0bZnWLmkjeN\"}",
+        "responseTime": 464
+      },
+      {
+        "prompt": "A magical forest with glowing mushrooms and fireflies, fantasy art",
+        "success": false,
+        "error": "HTTP 404: {\"error\":{\"message\":\"No endpoints found for google/gemini-2.5-flash-image-preview:free.\",\"code\":404},\"user_id\":\"user_2ooLY3vpIr8sKIoR0bZnWLmkjeN\"}",
+        "responseTime": 398
+      }
+    ]
+  },
+  "openai": {
+    "successes": 3,
+    "failures": 0,
+    "results": [
+      {
+        "prompt": "A cute robot painting a landscape on canvas in an art studio, digital art",
+        "success": true,
+        "imageUrl": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-4pTXuwcEV3kcyB2b1xuzOA68/user-ScoKW34nxlEp97qUc8gs9uIk/img-aXysnbNjNaAqT7s54pbivU2a.png?st=2025-09-09T17%3A49%3A17Z&se=2025-09-09T19%3A49%3A17Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=8eb2c87c-0531-4dab-acb3-b5e2adddce6c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-09-09T17%3A34%3A36Z&ske=2025-09-10T17%3A34%3A36Z&sks=b&skv=2024-08-04&sig=J1C7jP3tfouu7x4H1hZ/SRRlVyacNh4P3%2BHKK4V2YK0%3D",
+        "responseTime": 14418,
+        "revisedPrompt": "A visually pleasing robot with a design that evokes feelings of warmth and adorability, is carefully using its mechanical hands to create a landscape painting on a canvas. This artistic device is located within the inspiring atmosphere of an art studio, with the unmistakable smell of paint and surrounded by pots of brushes, palettes, and unfinished art pieces. The entire scene is visualized in a digital art medium, giving the impression of a seamless fusion of technology and creativity."
+      },
+      {
+        "prompt": "A futuristic city at sunset with flying cars, cyberpunk style",
+        "success": true,
+        "imageUrl": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-4pTXuwcEV3kcyB2b1xuzOA68/user-ScoKW34nxlEp97qUc8gs9uIk/img-8IyKx8NhEcD0LYBjd1PuiSFA.png?st=2025-09-09T17%3A49%3A42Z&se=2025-09-09T19%3A49%3A42Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=c6569cb0-0faa-463d-9694-97df3dc1dfb1&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-09-09T15%3A51%3A13Z&ske=2025-09-10T15%3A51%3A13Z&sks=b&skv=2024-08-04&sig=QgLIWuNCo%2BOPUnaUOvn3V1bzJdMGoGk8XjUKpUctoLE%3D",
+        "responseTime": 16700,
+        "revisedPrompt": "Envision a futuristic cityscape during a beautiful sunset. The city is buzzing with advanced technology, characterized by neon lit skyscrapers that punctuate the horizon. Numerous flying cars dart through the sky, demonstrating the progress of transportation technology. The architecture and decor of the city flashes with elements reminiscent of cyberpunk aesthetics, with vivid hashes of colors contrasting with the darkening twilight sky. The city pulsed with liveliness, capturing the essence of a futuristic metropolis within the colorful embrace of the setting sun."
+      },
+      {
+        "prompt": "A magical forest with glowing mushrooms and fireflies, fantasy art",
+        "success": true,
+        "imageUrl": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-4pTXuwcEV3kcyB2b1xuzOA68/user-ScoKW34nxlEp97qUc8gs9uIk/img-OoTCjXlI5qVXIwfX8EOc4gAq.png?st=2025-09-09T17%3A50%3A03Z&se=2025-09-09T19%3A50%3A03Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=c6569cb0-0faa-463d-9694-97df3dc1dfb1&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-09-09T15%3A24%3A04Z&ske=2025-09-10T15%3A24%3A04Z&sks=b&skv=2024-08-04&sig=PVjwOzvgdxvoxKWFyEX/SKcCGmvqhaJJzuIcDMK7FMI%3D",
+        "responseTime": 12225,
+        "revisedPrompt": "Imagine a mystical, enchanting forest under the guise of twilight where glowing, luminescent mushrooms of various sizes sprout from the ground. They emanate an ethereal light in shades of blue and green, creating an otherworldly ambiance. Meanwhile, countless fireflies illuminate the surroundings, adding an iridescent charm to the scenery. The natural harmony is further enhanced by the silhouettes of ancient trees enveloping the atmosphere with an air of secrecy. The image encapsulates the enchanting spirit of fantasy art through its dreamy, magical elements."
+      }
+    ]
+  }
+}

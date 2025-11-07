@@ -1,10 +1,64 @@
 import type React from "react"
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { User, Eye, EyeOff } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { useAppDispatch, useAppSelector } from "../hooks/reduxHooks"
-import { signIn, clearAuthError } from "../store/slices/authSlice"
+import { useAuth } from "../context/AuthContext"
+
+// Background images for slideshow - all images restored
+const backgroundImages = [
+  "/img/alchemyrefiner_alchemymagic_0_2c60cda9-5c96-4617-b12a-1e3a83408963_0.jpg",
+  "/img/Leonardo_Anime_XL_A_highly_detailed_digital_painting_of_a_coas_0%20(1).jpg",
+  "/img/Leonardo_Phoenix_10_Panoramic_shot_of_the_ancient_lost_city_Th_0.jpg",
+  "/img/Lucid_Origin_Surreal_lunar_colony_situated_under_a_vibrant_glo_0.jpg",
+  "/img/Lucid_Realism_A_macro_shot_hyperrealistic_intricate_human_eye__1.jpg"
+];
+
+const BackgroundSlideshow: React.FC = () => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        (prevIndex + 1) % backgroundImages.length
+      );
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-0 bg-black">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentImageIndex}
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+          className="absolute inset-0"
+        >
+          <img
+            src={backgroundImages[currentImageIndex]}
+            alt="Background"
+            className="w-full h-full object-cover slideshow-image transform scale-110"
+            style={{
+              objectPosition: 'center center',
+              filter: 'brightness(1.05) contrast(1.1) saturate(1.2)'
+            }}
+            onLoad={() => {
+              console.log('Image loaded:', backgroundImages[currentImageIndex]);
+            }}
+            onError={(e) => {
+              console.error('Failed to load image:', backgroundImages[currentImageIndex]);
+              console.error('Error:', e);
+            }}
+          />
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const AvatarPlaceholder: React.FC = () => {
   return (
@@ -115,9 +169,9 @@ const FooterLinks: React.FC<FooterLinksProps> = ({ onForgotPassword, onSignUp })
 const LoginCard: React.FC = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
-  const { isLoading } = useAppSelector((state) => state.auth)
+  const { signIn } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -133,15 +187,21 @@ const LoginCard: React.FC = () => {
       return
     }
 
-    // Clear any previous errors
-    dispatch(clearAuthError())
+    setIsLoading(true)
 
-    // Attempt to sign in using Redux
     try {
-      await dispatch(signIn({ email, password })).unwrap()
-      // Navigation will be handled by App component when auth state changes
+      const result = await signIn(email, password)
+      if (result.error) {
+        alert("Login failed: " + result.error.message)
+      } else {
+        // Success - navigation will be handled by App component
+        navigate("/dashboard")
+      }
     } catch (error) {
       console.error("Login failed:", error)
+      alert("Login failed: " + (error as Error).message)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -154,47 +214,50 @@ const LoginCard: React.FC = () => {
   }
 
   return (
-    <div className="w-full flex flex-col items-center">
-      <h1 className="text-3xl text-center font-mono font-black text-gray-500 mt-20 mb-6">Sign In</h1>
-      <div className="relative w-full max-w-md mx-auto">
-        <div className="moving-border">
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.6,
-            }}
-            className="w-full bg-[#f0f3fa] rounded-3xl p-8 shadow-[20px_20px_40px_#d1d9e6,-20px_-20px_40px_#ffffff] mt-4 relative z-10"
-          >
-            <div className="flex flex-col items-center">
-              <AvatarPlaceholder />
+    <>
+      <BackgroundSlideshow />
+      <div className="relative z-10 w-full flex flex-col items-center">
+        <h1 className="text-3xl text-center font-mono font-black text-white mt-20 mb-6 drop-shadow-lg">Sign In</h1>
+        <div className="relative w-full max-w-md mx-auto">
+          <div className="moving-border">
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                duration: 0.6,
+              }}
+              className="w-full login-card-backdrop rounded-3xl p-8 shadow-[20px_20px_40px_rgba(209,217,230,0.6),-20px_-20px_40px_rgba(255,255,255,0.6)] mt-4 relative z-10"
+            >
+              <div className="flex flex-col items-center">
+                <AvatarPlaceholder />
 
-              <form onSubmit={handleSubmit} className="w-full">
-                <InputField type="email" placeholder="Email" value={email} onChange={setEmail} />
+                <form onSubmit={handleSubmit} className="w-full">
+                  <InputField type="email" placeholder="Email" value={email} onChange={setEmail} />
 
-                <InputField
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={setPassword}
-                  showPasswordToggle={true}
-                />
+                  <InputField
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={setPassword}
+                    showPasswordToggle={true}
+                  />
 
-                <LoginButton onClick={handleSubmit} isLoading={isLoading} />
-              </form>
+                  <LoginButton onClick={handleSubmit} isLoading={isLoading} />
+                </form>
 
-              <FooterLinks onForgotPassword={handleForgotPassword} onSignUp={handleSignUp} />
-            </div>
-          </motion.div>
+                <FooterLinks onForgotPassword={handleForgotPassword} onSignUp={handleSignUp} />
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

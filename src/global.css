@@ -1,0 +1,283 @@
+@import "tailwindcss";
+
+:root {
+  /* Updated color tokens to match dramatic lighting design brief */
+  --background: #000000; /* Pure black background */
+  --foreground: oklch(1 0 0); /* Pure white for text and highlights */
+  --card: oklch(0.95 0 0); /* Light gray for subtle backgrounds */
+  --card-foreground: oklch(0 0 0); /* Black text on light cards */
+  --popover: oklch(1 0 0); /* White for popover backgrounds */
+  --popover-foreground: oklch(0 0 0); /* Black text in popovers */
+  --primary: oklch(0.65 0.2 270); /* Violet accent for highlights */
+  --primary-foreground: oklch(1 0 0); /* White text on violet */
+  --secondary: oklch(0.95 0 0); /* Light gray for secondary elements */
+  --secondary-foreground: oklch(0 0 0); /* Black text on secondary */
+  --muted: oklch(0.25 0 0); /* Dark gray for muted elements */
+  --muted-foreground: oklch(0.95 0 0); /* Light gray text for muted */
+  --accent: oklch(0.65 0.2 270); /* Violet for interactive elements */
+  --accent-foreground: oklch(1 0 0); /* White text on accent */
+  --destructive: oklch(0.6 0.2 40); /* Amber for destructive actions */
+  --destructive-foreground: oklch(1 0 0); /* White text for destructive */
+  --border: oklch(1 0 0); /* White borders for contrast */
+  --input: oklch(0.95 0 0); /* Light gray for inputs */
+  --ring: oklch(0.65 0.2 270); /* Violet for focus rings */
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.5rem; /* Softer rounded corners */
+  --sidebar: oklch(0 0 0); /* Black sidebar */
+  --sidebar-foreground: oklch(1 0 0); /* White sidebar text */
+  --sidebar-primary: oklch(0.65 0 0); /* Violet for primary sidebar */
+  --sidebar-primary-foreground: oklch(1 0 0); /* White text on sidebar primary */
+  --sidebar-accent: oklch(0.95 0 0); /* Light gray for sidebar accent */
+  --sidebar-accent-foreground: oklch(0 0 0); /* Black text on sidebar accent */
+  --sidebar-border: oklch(1 0 0); /* White sidebar borders */
+  --sidebar-ring: oklch(0.65 0.2 270); /* Violet for sidebar focus */
+  --font-instrument-serif: "Instrument Serif", serif; /* Instrument Serif font family configuration */
+  /* Added Figtree as the primary font variable */
+  --font-figtree: "Figtree", sans-serif; /* Figtree font family configuration */
+}
+
+.dark {
+  /* Dark mode maintains the same dramatic black background theme */
+  --background: #000000;
+  --foreground: oklch(1 0 0);
+  --card: oklch(0.1 0 0);
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.1 0 0);
+  --popover-foreground: oklch(1 0 0);
+  --primary: oklch(0.7 0.25 270);
+  --primary-foreground: oklch(0 0 0);
+  --secondary: oklch(0.15 0 0);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.15 0 0);
+  --muted-foreground: oklch(0.7 0 0);
+  --accent: oklch(0.7 0.25 270);
+  --accent-foreground: oklch(0 0 0);
+  --destructive: oklch(0.5 0.2 40);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.3 0 0);
+  --input: oklch(0.15 0 0);
+  --ring: oklch(0.7 0.25 270);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.05 0 0);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(0.7 0.25 270);
+  --sidebar-primary-foreground: oklch(0 0 0);
+  --sidebar-accent: oklch(0.15 0 0);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.3 0 0);
+  --sidebar-ring: oklch(0.7 0.25 270);
+  --font-instrument-serif: "Instrument Serif", serif; /* Instrument Serif font family configuration */
+  /* Added Figtree font variable for dark mode consistency */
+  --font-figtree: "Figtree", sans-serif; /* Figtree font family configuration */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  /* Set Figtree as the default font family for the entire website */
+  font-family: var(--font-figtree);
+}
+
+.instrument {
+  font-family: var(--font-instrument-serif);
+}
+
+/* Custom CSS Animation for Pulsing Border Effect */
+@keyframes pulsingBorder {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.05); }
+  50% { transform: rotate(180deg) scale(1); }
+  75% { transform: rotate(270deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes colorShift {
+  0% { filter: hue-rotate(0deg) brightness(1) saturate(1); }
+  20% { filter: hue-rotate(72deg) brightness(1.2) saturate(1.5); }
+  40% { filter: hue-rotate(144deg) brightness(1) saturate(1); }
+  60% { filter: hue-rotate(216deg) brightness(1.2) saturate(1.5); }
+  80% { filter: hue-rotate(288deg) brightness(1) saturate(1); }
+  100% { filter: hue-rotate(360deg) brightness(1) saturate(1); }
+}
+
+.pulsing-border {
+  animation: pulsingBorder 3s linear infinite, colorShift 6s linear infinite;
+}
+
+/* Custom animations for login component */
+.moving-border {
+  position: relative;
+  z-index: 1;
+}
+
+.moving-border::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 50%;
+  box-shadow: 0 0 8px 2px #ff1493, 0 0 3px 1px #ff1493;
+  z-index: -1;
+  animation: pink-shadow 4s ease infinite;
+  border-radius: 24px;
+}
+
+.moving-border::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50%;
+  height: 50%;
+  box-shadow: 0 0 8px 2px #8b00ff, 0 0 3px 1px #8b00ff;
+  z-index: -1;
+  animation: purple-shadow 4s ease infinite;
+  border-radius: 24px;
+}
+
+@keyframes pink-shadow {
+  0% {
+    top: 0;
+    left: 0;
+  }
+  25% {
+    top: 50%;
+    left: 0;
+  }
+  50% {
+    top: 50%;
+    left: 50%;
+  }
+  75% {
+    top: 0;
+    left: 50%;
+  }
+  100% {
+    top: 0;
+    left: 0;
+  }
+}
+
+@keyframes purple-shadow {
+  0% {
+    right: 0;
+    bottom: 0;
+  }
+  25% {
+    right: 0;
+    bottom: 50%;
+  }
+  50% {
+    right: 50%;
+    bottom: 50%;
+  }
+  75% {
+    right: 50%;
+    bottom: 0;
+  }
+  100% {
+    right: 0;
+    bottom: 0;
+  }
+}
+
+/* Neon glow effect for login component */
+.neon-glow {
+  position: relative;
+  z-index: 1;
+}
+
+.neon-glow::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: -30px;
+  right: -30px;
+  bottom: -30px;
+  background: linear-gradient(45deg, #ff1493, #8b00ff, #ff69b4, #da70d6, #ff1493);
+  background-size: 400% 400%;
+  border-radius: 60px;
+  z-index: -1;
+  filter: blur(25px);
+  opacity: 0.8;
+  animation: neonPulse 3s ease-in-out infinite, gradientShift 4s ease infinite;
+}
+
+.neon-glow::after {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  right: -15px;
+  bottom: -15px;
+  background: linear-gradient(135deg, #ff1493aa, #8b00ffaa, #ff69b4aa);
+  border-radius: 45px;
+  z-index: -1;
+  filter: blur(15px);
+  opacity: 0.6;
+  animation: neonPulse 2s ease-in-out infinite reverse;
+}
+
+@keyframes neonPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Slideshow background enhancements */
+.slideshow-image {
+  transition: transform 0.8s ease-in-out, filter 0.5s ease-in-out;
+  will-change: transform, filter;
+}
+
+.slideshow-image:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1) contrast(1.15) saturate(1.3) !important;
+}
+
+/* Enhanced backdrop blur for login card */
+.login-card-backdrop {
+  backdrop-filter: blur(10px);
+  background: rgba(240, 243, 250, 0.85);
+}
+
+/* Base body styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

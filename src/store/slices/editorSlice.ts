@@ -63,8 +63,9 @@ export const fetchTimeline = createAsyncThunk(
 
       // Fetch media assets used in clips
       const mediaAssetIds = clips
-        .filter((clip: Clip) => clip.media_asset_id)
-        .map((clip: Clip) => clip.media_asset_id);
+        .filter((clip: any) => clip.media_asset_id != null)
+        .map((clip: any) => clip.media_asset_id)
+        .filter((id): id is string => typeof id === 'string');
 
       const { data: mediaAssets, error: mediaAssetsError } = await supabase
         .from('media_assets')
@@ -240,8 +241,8 @@ const editorSlice = createSlice({
         state.isLoading = false;
         state.timeline = action.payload.timeline;
         state.tracks = action.payload.tracks;
-        state.clips = action.payload.clips;
-        state.mediaAssets = action.payload.mediaAssets;
+        state.clips = action.payload.clips as any;
+        state.mediaAssets = action.payload.mediaAssets as any;
       })
       .addCase(fetchTimeline.rejected, (state, action) => {
         state.isLoading = false;
@@ -269,7 +270,7 @@ const editorSlice = createSlice({
       })
       .addCase(createClip.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.clips.push(action.payload);
+        (state.clips as any).push(action.payload);
       })
       .addCase(createClip.rejected, (state, action) => {
         state.isLoading = false;
@@ -283,9 +284,9 @@ const editorSlice = createSlice({
       })
       .addCase(updateClip.fulfilled, (state, action) => {
         state.isLoading = false;
-        const index = state.clips.findIndex(c => c.id === action.payload.id);
+        const index = (state.clips as any).findIndex((c: any) => c.id === action.payload.id);
         if (index !== -1) {
-          state.clips[index] = action.payload;
+          (state.clips as any)[index] = action.payload;
         }
       })
       .addCase(updateClip.rejected, (state, action) => {
@@ -300,7 +301,7 @@ const editorSlice = createSlice({
       })
       .addCase(deleteClip.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.clips = state.clips.filter(c => c.id !== action.payload);
+        state.clips = (state.clips as any).filter((c: any) => c.id !== action.payload);
         if (state.selectedClipId === action.payload) {
           state.selectedClipId = null;
         }

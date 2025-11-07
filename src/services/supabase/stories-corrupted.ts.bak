@@ -1,0 +1,355 @@
+import { supabase } from './client';
+import { openaiService, ScenaristAnalysis } from '../openai/story      console.log('🎨 Generating cover image with DALL-E...');
+      
+      // Step 2.5: Generate actual cover image with DALL-E
+      const coverImage = await openaiService.generateCoverImage(
+        analysis.cover_image_data.prompt,
+        storyData.title
+      );
+
+      console.log('💾 Storing cover image permanently...');
+      
+      // Step 2.6: Store image permanently in Supabase Storage
+      const { storedUrl, error: storageError } = await imageStorageService.storeImageFromUrl(
+        coverImage.imageUrl,
+        story.id,
+        storyData.title
+      );
+
+      if (storageError) {
+        console.warn('⚠️ Image storage failed, using temporary URL:', storageError);
+      }
+
+      // Use permanent URL if available, fallback to temporary DALL-E URL
+      const finalImageUrl = storedUrl || coverImage.imageUrl;
+
+      console.log('🎯 The Scenarist Core analysis complete, saving enhanced data...');;
+import { imageStorageService } from './imageStorage';
+
+export interface CreateStoryRequest {
+  title: string;
+  full_story_text: string;
+  logline?: string;
+  genre?: string;
+  target_audience?: string;
+  visual_style?: string; // Visual style ID for cover image generation
+}
+
+export interface Story {
+  id: string;
+  user_id: string;
+  project_id?: string | null;
+  title: string;
+  logline?: string | null;
+  full_story_text: string;
+  genre?: string | null;
+  target_audience?: string | null;
+  estimated_duration?: number | null;
+  status: string;
+  ai_analysis_metadata?: any;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Chapter {
+  id: string;
+  story_id: string;
+  chapter_number: number;
+  chapter_title: string;
+  original_story_text_portion: string;
+  chapter_summary: string;
+  estimated_film_time: number;
+  mood_tone: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Character {
+  id: string;
+  story_id: string;
+  character_name: string;
+  role_in_story: string;
+  context_backstory: string;
+  physical_description: string;
+  personality_traits: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export const storiesService = {
+  // Create a new story with AI processing
+  async createStoryWithAI(storyData: CreateStoryRequest): Promise<{ 
+    story: Story | null; 
+    chapters: Chapter[] | null;
+    characters: Character[] | null;
+    coverImagePrompt?: string;
+    coverImageUrl?: string;
+    error: any 
+  }> {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { story: null, chapters: null, characters: null, error: new Error('User not authenticated') };
+    }
+
+    try {
+      console.log('🎬 Creating story and starting AI analysis...');
+      
+      // Step 1: Create the story record
+      const { data: story, error: storyError } = await supabase
+        .from('stories')
+        .insert({
+          user_id: user.id,
+          title: storyData.title,
+          full_story_text: storyData.full_story_text,
+          logline: storyData.logline,
+          genre: storyData.genre,
+          target_audience: storyData.target_audience,
+          status: 'analyzing' as any // Mark as being processed
+        })
+        .select()
+        .single();
+
+      if (storyError || !story) {
+        throw new Error(`Failed to create story: ${storyError?.message}`);
+      }
+
+      console.log('✅ Story created, starting AI processing...');
+
+      // Step 2: Process with The Scenarist Core v2.0
+      const analysis = await openaiService.analyzeStoryWithScenarist(
+        storyData.full_story_text, 
+        storyData.title,
+        storyData.visual_style || 'steve-mccurry' // Default to Steve McCurry style
+      );
+
+      console.log('� Generating cover image with DALL-E...');
+      
+      // Step 2.5: Generate actual cover image with DALL-E
+      const coverImage = await openaiService.generateCoverImage(
+        analysis.cover_image_data.prompt,
+        storyData.title
+      );
+
+      console.log('�🎯 The Scenarist Core analysis complete, saving enhanced data...');
+
+      // Step 3: Save chapters with enhanced data
+      const chaptersToInsert = analysis.chapters.map(chapter => ({
+        story_id: story.id,
+        chapter_number: chapter.order,
+        chapter_title: chapter.title,
+        original_story_text_portion: chapter.original_text_portion,
+        chapter_summary: chapter.summary,
+        estimated_film_time: chapter.estimated_film_time_sec,
+        mood_tone: chapter.cinematic_vitals.mood_tone,
+        narrative_purpose: chapter.narrative_purpose,
+        cinematic_vitals: chapter.cinematic_vitals,
+        complexity: chapter.complexity,
+        hooks_for_next_chapter: chapter.hooks_for_next_chapter,
+        status: 'pending' as any
+      }));
+
+      const { data: chapters, error: chaptersError } = await supabase
+        .from('chapters')
+        .insert(chaptersToInsert)
+        .select();
+
+      if (chaptersError) {
+        console.error('Error saving enhanced chapters:', chaptersError);
+      }
+
+      // Step 4: Save characters with deep psychology
+      const charactersToInsert = analysis.characters.map(character => ({
+        story_id: story.id,
+        character_name: character.name,
+        role_in_story: character.role_in_story,
+        context_backstory: character.narrative_vitals.goals + ' | ' + character.narrative_vitals.wound,
+        physical_description: character.visual_dna.look_and_feel,
+        personality_traits: character.psychology.motivations,
+        narrative_vitals: character.narrative_vitals,
+        psychology: character.psychology,
+        arc: character.arc,
+        emotional_trajectory: character.emotional_trajectory,
+        performance_dna: character.performance_dna,
+        visual_dna: character.visual_dna,
+        status: 'identified' as any
+      }));
+
+      const { data: characters, error: charactersError } = await supabase
+        .from('characters')
+        .insert(charactersToInsert)
+        .select();
+
+      if (charactersError) {
+        console.error('Error saving enhanced characters:', charactersError);
+      }
+
+      // Step 5: Update story with The Scenarist Core v2.0 metadata AND cover image
+      const { error: updateError } = await supabase
+        .from('stories')
+        .update({
+          status: 'chapterized' as any,
+          story_metadata: analysis.story_metadata,
+          commercial_analysis: analysis.commercial_analysis,
+          production_plan: analysis.production_plan,
+          agent_diagnostics: analysis.agent_diagnostics,
+          cover_image_url: coverImage.imageUrl, // Save the actual image URL
+          ai_analysis_metadata: {
+            cover_image_prompt: analysis.cover_image_data.prompt,
+            cover_image_enhanced_prompt: coverImage.prompt, // Save enhanced DALL-E prompt
+            style_applied: analysis.cover_image_data.style_applied,
+            selected_style: analysis.cover_image_data.selected_style,
+            chapters_count: analysis.chapters.length,
+            characters_count: analysis.characters.length,
+            agent_version: 'S-1X',
+            processed_at: new Date().toISOString()
+          }
+        })
+        .eq('id', story.id);
+
+      if (updateError) {
+        console.error('Error updating story with Scenarist metadata:', updateError);
+      }
+
+      console.log('🎉 Complete! Story processed by The Scenarist Core v2.0 with cover image!');
+
+      return {
+        story,
+        chapters: chapters as any || [],
+        characters: characters as any || [],
+        coverImagePrompt: analysis.cover_image_data.prompt,
+        coverImageUrl: coverImage.imageUrl, // Return the image URL
+        error: null
+      };
+
+    } catch (error) {
+      console.error('Error in AI story processing:', error);
+      
+      // If story was created but AI processing failed, update status
+      if (error instanceof Error && error.message.includes('Failed to create story')) {
+        // Story creation failed, nothing to update
+      } else {
+        // AI processing failed, mark story as failed
+        await supabase
+          .from('stories')
+          .update({ status: 'new' }) // Reset to allow retry
+          .eq('user_id', user.id)
+          .eq('title', storyData.title);
+      }
+      
+      return { 
+        story: null, 
+        chapters: null, 
+        characters: null, 
+        error: error instanceof Error ? error : new Error('Unknown error occurred') 
+      };
+    }
+  },
+
+  // Get chapters for a story
+  async getStoryChapters(storyId: string): Promise<{ data: Chapter[] | null; error: any }> {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { data: null, error: new Error('User not authenticated') };
+    }
+
+    const { data, error } = await supabase
+      .from('chapters')
+      .select('*')
+      .eq('story_id', storyId)
+      .order('chapter_number', { ascending: true });
+
+    return { data: data as any, error };
+  },
+
+  // Get characters for a story
+  async getStoryCharacters(storyId: string): Promise<{ data: Character[] | null; error: any }> {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { data: null, error: new Error('User not authenticated') };
+    }
+
+    const { data, error } = await supabase
+      .from('characters')
+      .select('*')
+      .eq('story_id', storyId)
+      .order('character_name', { ascending: true });
+
+    return { data: data as any, error };
+  },
+
+  // Get all stories for the current user
+  async getUserStories(): Promise<{ data: Story[] | null; error: any }> {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { data: null, error: new Error('User not authenticated') };
+    }
+
+    const { data, error } = await supabase
+      .from('stories')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    return { data, error };
+  },
+
+  // Get a specific story by ID
+  async getStoryById(storyId: string): Promise<{ data: Story | null; error: any }> {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { data: null, error: new Error('User not authenticated') };
+    }
+
+    const { data, error } = await supabase
+      .from('stories')
+      .select('*')
+      .eq('id', storyId)
+      .eq('user_id', user.id)
+      .single();
+
+    return { data, error };
+  },
+
+  // Update a story
+  async updateStory(storyId: string, updates: Partial<CreateStoryRequest>): Promise<{ data: Story | null; error: any }> {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { data: null, error: new Error('User not authenticated') };
+    }
+
+    const { data, error } = await supabase
+      .from('stories')
+      .update(updates)
+      .eq('id', storyId)
+      .eq('user_id', user.id)
+      .select()
+      .single();
+
+    return { data, error };
+  },
+
+  // Delete a story
+  async deleteStory(storyId: string): Promise<{ error: any }> {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { error: new Error('User not authenticated') };
+    }
+
+    const { error } = await supabase
+      .from('stories')
+      .delete()
+      .eq('id', storyId)
+      .eq('user_id', user.id);
+
+    return { error };
+  }
+};

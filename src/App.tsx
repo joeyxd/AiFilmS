@@ -1,79 +1,180 @@
-import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
 
 // Layouts
 import MainLayout from './layouts/MainLayout';
 
-// Auth Pages
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import ForgotPassword from './pages/auth/ForgotPassword';
+// Components
+import LoginCard from './components/login';
+import RegisterCard from './components/register';
+import OnboardingPage from './components/authonboarding';
+import JobRolePage from './components/authjobrole';
+import CompanyInfoPage from './components/authcompanyinfo';
+import WelcomePage from './components/authwelcome';
+import EmailConfirmation from './components/EmailConfirmation';
+import AuthConfirm from './components/AuthConfirm';
+import LoadingScreen from './components/LoadingScreen';
 
 // Main Pages
-import Dashboard from './pages/dashboard/Dashboard';
-import ProjectList from './pages/projects/ProjectList';
-import ProjectDetail from './pages/projects/ProjectDetail';
-import Editor from './pages/editor/Editor';
-import Settings from './pages/settings/Settings';
-import MediaLibrary from './pages/media/MediaLibrary';
+import RoleBasedAnimatedDashboard from './components/Dashboard/RoleBasedAnimatedDashboard';
+import PortfolioShowcase from './components/portafolio-showcase';
+import AIDebugPanel from './components/ai/AIDebugPanel';
 
-// Auth context and hooks
-import { useAppDispatch, useAppSelector } from './hooks/reduxHooks';
-import { checkSession } from './store/slices/authSlice';
+// Auth context
+import { AuthProvider, useAuth } from './context/AuthContext';
 
-const App = () => {
-  const dispatch = useAppDispatch();
-  const { user, isLoading } = useAppSelector((state) => state.auth);
-  const [isInitialized, setIsInitialized] = useState(false);
+// App component wrapped with AuthProvider
+const AppContent = () => {
+  const { user, loading, profile } = useAuth();
 
-  // Check session on app init
-  useEffect(() => {
-    const initializeAuth = async () => {
-      await dispatch(checkSession());
-      setIsInitialized(true);
-    };
-
-    initializeAuth();
-  }, [dispatch]);
+  console.log('=== CLEAN APP DEBUG ===', { 
+    user: !!user, 
+    loading, 
+    profile: !!profile, 
+    onboardingCompleted: profile?.onboarding_completed,
+    userEmail: user?.email,
+    profileData: profile // Show full profile to see onboarding status
+  });
 
   // Show loading indicator while checking auth
-  if (isLoading || !isInitialized) {
+  if (loading) {
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          width: '100vw',
-        }}
-      >
-        <CircularProgress />
-      </Box>
+      <LoadingScreen 
+        message="Initializing Auracle Film Studio..."
+        subMessage="Setting up your creative workspace"
+      />
     );
   }
+
+  // Simple, clear routing logic
+  const isAuthenticated = !!user;
+  const hasProfile = !!profile;
+  const onboardingComplete = hasProfile && profile.onboarding_completed;
+  
+  // If user is authenticated but profile is still loading, show loading state
+  const isProfileLoading = isAuthenticated && !hasProfile && !loading;
+
+  // Login page component
+  const LoginPage = () => (
+    <div className="min-h-screen flex items-center justify-center p-4 overflow-hidden">
+      <LoginCard />
+    </div>
+  );
+
+  // Register page component
+  const RegisterPage = () => (
+    <div className="min-h-screen flex items-center justify-center p-4 overflow-hidden">
+      <RegisterCard />
+    </div>
+  );
 
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-      <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
-      <Route path="/forgot-password" element={user ? <Navigate to="/" /> : <ForgotPassword />} />
+      <Route 
+        path="/login" 
+        element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} 
+      />
+      <Route 
+        path="/register" 
+        element={isAuthenticated ? <Navigate to="/" replace /> : <RegisterPage />} 
+      />
+      
+      {/* Onboarding routes */}
+      <Route 
+        path="/onboarding" 
+        element={
+          !isAuthenticated ? <Navigate to="/login" replace /> :
+          onboardingComplete ? <Navigate to="/dashboard" replace /> : 
+          <OnboardingPage />
+        } 
+      />
+      <Route 
+        path="/job-role" 
+        element={
+          !isAuthenticated ? <Navigate to="/login" replace /> :
+          onboardingComplete ? <Navigate to="/dashboard" replace /> : 
+          <JobRolePage />
+        } 
+      />
+      <Route 
+        path="/company-info" 
+        element={
+          !isAuthenticated ? <Navigate to="/login" replace /> :
+          onboardingComplete ? <Navigate to="/dashboard" replace /> : 
+          <CompanyInfoPage />
+        } 
+      />
+      <Route 
+        path="/welcome" 
+        element={
+          !isAuthenticated ? <Navigate to="/login" replace /> :
+          onboardingComplete ? <Navigate to="/dashboard" replace /> : 
+          <WelcomePage />
+        } 
+      />
+      
+      {/* Special auth routes */}
+      <Route path="/email-confirmation" element={<EmailConfirmation />} />
+      <Route path="/auth/confirm" element={<AuthConfirm />} />
 
       {/* Protected routes */}
+      <Route 
+        path="/dashboard" 
+        element={
+          !isAuthenticated ? <Navigate to="/login" replace /> : 
+          isProfileLoading ? (
+            <LoadingScreen 
+              message="Loading your profile..."
+              subMessage="Preparing your personalized experience"
+            />
+          ) :
+          !onboardingComplete ? <Navigate to="/onboarding" replace /> :
+          <RoleBasedAnimatedDashboard />
+        } 
+      />
+      
+      {/* Test route for portfolio showcase */}
+      <Route 
+        path="/portfolio-test" 
+        element={<PortfolioShowcase />} 
+      />
+      
+      {/* AI Debug Panel for viewing analysis results */}
+      <Route 
+        path="/ai-debug" 
+        element={
+          !isAuthenticated ? <Navigate to="/login" replace /> : 
+          <AIDebugPanel />
+        } 
+      />
+      
+      {/* Other protected routes with layout */}
       <Route element={<MainLayout />}>
-        <Route path="/" element={!user ? <Navigate to="/login" /> : <Dashboard />} />
-        <Route path="/projects" element={!user ? <Navigate to="/login" /> : <ProjectList />} />
-        <Route path="/projects/:id" element={!user ? <Navigate to="/login" /> : <ProjectDetail />} />
-        <Route path="/editor/:id" element={!user ? <Navigate to="/login" /> : <Editor />} />
-        <Route path="/media" element={!user ? <Navigate to="/login" /> : <MediaLibrary />} />
-        <Route path="/settings" element={!user ? <Navigate to="/login" /> : <Settings />} />
+        {/* Add other protected routes here if needed */}
       </Route>
 
-      {/* Catch all route */}
-      <Route path="*" element={<Navigate to={user ? "/" : "/login"} />} />
+      {/* Root route */}
+      <Route 
+        path="/" 
+        element={
+          !isAuthenticated ? <Navigate to="/login" replace /> : 
+          !onboardingComplete ? <Navigate to="/onboarding" replace /> :
+          <Navigate to="/dashboard" replace />
+        } 
+      />
+
+      {/* Catch all */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+  );
+};
+
+// Main App component with AuthProvider
+const App = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { 
   Box, 
@@ -20,7 +19,6 @@ import {
   ChevronLeft as ChevronLeftIcon,
   Dashboard as DashboardIcon,
   VideoLibrary as ProjectsIcon,
-  Movie as EditorIcon,
   PermMedia as MediaIcon,
   Settings as SettingsIcon,
   Logout as LogoutIcon
@@ -29,6 +27,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import { signOut } from '../store/slices/authSlice';
 import { setSidebarOpen } from '../store/slices/uiSlice';
 import { useNavigate } from 'react-router-dom';
+import AuracleLogo from '../components/AuracleLogo';
 
 const DRAWER_WIDTH = 240;
 
@@ -77,9 +76,12 @@ const MainLayout = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            FilmStudio AI Platform
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <AuracleLogo size="small" />
+            <Typography variant="h6" noWrap component="div" sx={{ fontFamily: 'var(--font-figtree)' }}>
+              Auracle Film Studio
+            </Typography>
+          </Box>
         </Toolbar>
       </AppBar>
 
@@ -102,11 +104,18 @@ const MainLayout = () => {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            justifyContent: 'space-between',
             px: [1],
+            backgroundColor: '#000000',
           }}
         >
-          <IconButton onClick={handleDrawerToggle}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <AuracleLogo size="small" />
+            <Typography variant="subtitle1" sx={{ color: 'white', fontFamily: 'var(--font-figtree)' }}>
+              Auracle
+            </Typography>
+          </Box>
+          <IconButton onClick={handleDrawerToggle} sx={{ color: 'white' }}>
             <ChevronLeftIcon />
           </IconButton>
         </Toolbar>

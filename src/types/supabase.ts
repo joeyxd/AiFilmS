@@ -532,34 +532,46 @@ export interface Database {
       }
       stories: {
         Row: {
+          commercial_analysis: Json | null
+          cover_image_prompt: string | null
+          cover_image_url: string | null
           created_at: string
           full_story_text: string
           id: string
           logline: string | null
           project_id: string | null
           status: Database["public"]["Enums"]["story_status"]
+          story_metadata: Json | null
           title: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          commercial_analysis?: Json | null
+          cover_image_prompt?: string | null
+          cover_image_url?: string | null
           created_at?: string
           full_story_text: string
           id?: string
           logline?: string | null
           project_id?: string | null
           status?: Database["public"]["Enums"]["story_status"]
+          story_metadata?: Json | null
           title: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          commercial_analysis?: Json | null
+          cover_image_prompt?: string | null
+          cover_image_url?: string | null
           created_at?: string
           full_story_text?: string
           id?: string
           logline?: string | null
           project_id?: string | null
           status?: Database["public"]["Enums"]["story_status"]
+          story_metadata?: Json | null
           title?: string
           updated_at?: string
           user_id?: string
@@ -570,6 +582,56 @@ export interface Database {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      story_images: {
+        Row: {
+          created_at: string
+          file_path: string | null
+          file_size: number | null
+          id: string
+          image_type: string
+          image_url: string
+          mime_type: string
+          original_dalle_url: string | null
+          prompt: string | null
+          story_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          image_type?: string
+          image_url: string
+          mime_type?: string
+          original_dalle_url?: string | null
+          prompt?: string | null
+          story_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          image_type?: string
+          image_url?: string
+          mime_type?: string
+          original_dalle_url?: string | null
+          prompt?: string | null
+          story_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_images_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
             referencedColumns: ["id"]
           }
         ]

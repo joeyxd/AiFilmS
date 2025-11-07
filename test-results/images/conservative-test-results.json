@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-09-09T19:06:24.579Z",
+  "creditConservative": true,
+  "openrouter": {
+    "successes": 1,
+    "failures": 0,
+    "results": [
+      {
+        "prompt": "A cute robot painting a landscape on canvas in an art studio, digital art",
+        "success": true,
+        "response": "Sure, here's an image of a cute robot painting a landscape on canvas in an art studio, in a digital art style! ",
+        "responseTime": 1278,
+        "tokens": 1337,
+        "creditUsage": {
+          "prompt_tokens": 19,
+          "completion_tokens": 1318,
+          "total_tokens": 1337,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 1290
+          }
+        },
+        "imageUrl": null,
+        "downloadResult": null
+      }
+    ]
+  },
+  "previousDownloads": "Downloaded existing OpenAI images without generating new ones"
+}

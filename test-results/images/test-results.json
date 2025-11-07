@@ -1,0 +1,47 @@
+[
+  {
+    "prompt": "A cute robot painting a landscape on canvas in an art studio, digital art",
+    "openrouter": {
+      "prompt": "A cute robot painting a landscape on canvas in an art studio, digital art",
+      "status": "failed",
+      "duration": 1006,
+      "error": "HTTP 402: {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 4096 tokens, but can only afford 3348. To increase, visit https://openrouter.ai/settings/credits and add more credits\",\"code\":402,\"metadata\":{\"provider_name\":null}},\"user_id\":\"user_2ooLY3vpIr8sKIoR0bZnWLmkjeN\"}"
+    },
+    "openai": {
+      "prompt": "A cute robot painting a landscape on canvas in an art studio, digital art",
+      "provider": "OpenAI DALL-E 3 (Mock)",
+      "status": "failed",
+      "error": "request to https://via.placeholder.com/1024x1024/4A90E2/FFFFFF?text=DALL-E+Mock+1 failed, reason: getaddrinfo ENOTFOUND via.placeholder.com"
+    }
+  },
+  {
+    "prompt": "A futuristic city at sunset with flying cars, cyberpunk style",
+    "openrouter": {
+      "prompt": "A futuristic city at sunset with flying cars, cyberpunk style",
+      "status": "failed",
+      "duration": 440,
+      "error": "HTTP 402: {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 4096 tokens, but can only afford 3348. To increase, visit https://openrouter.ai/settings/credits and add more credits\",\"code\":402,\"metadata\":{\"provider_name\":null}},\"user_id\":\"user_2ooLY3vpIr8sKIoR0bZnWLmkjeN\"}"
+    },
+    "openai": {
+      "prompt": "A futuristic city at sunset with flying cars, cyberpunk style",
+      "provider": "OpenAI DALL-E 3 (Mock)",
+      "status": "failed",
+      "error": "request to https://via.placeholder.com/1024x1024/4A90E2/FFFFFF?text=DALL-E+Mock+2 failed, reason: getaddrinfo ENOTFOUND via.placeholder.com"
+    }
+  },
+  {
+    "prompt": "A magical forest with glowing mushrooms and fireflies, fantasy art",
+    "openrouter": {
+      "prompt": "A magical forest with glowing mushrooms and fireflies, fantasy art",
+      "status": "failed",
+      "duration": 382,
+      "error": "HTTP 402: {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 4096 tokens, but can only afford 3348. To increase, visit https://openrouter.ai/settings/credits and add more credits\",\"code\":402,\"metadata\":{\"provider_name\":null}},\"user_id\":\"user_2ooLY3vpIr8sKIoR0bZnWLmkjeN\"}"
+    },
+    "openai": {
+      "prompt": "A magical forest with glowing mushrooms and fireflies, fantasy art",
+      "provider": "OpenAI DALL-E 3 (Mock)",
+      "status": "failed",
+      "error": "request to https://via.placeholder.com/1024x1024/4A90E2/FFFFFF?text=DALL-E+Mock+3 failed, reason: getaddrinfo ENOTFOUND via.placeholder.com"
+    }
+  }
+]

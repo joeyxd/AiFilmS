@@ -1,9 +1,11 @@
+import { Json } from './supabase';
+
 // Basic user types
 export interface User {
   id: string;
   email: string;
   username: string;
-  avatar_url?: string;
+  avatar_url?: string | null;
   subscription_tier: string;
 }
 
@@ -128,17 +130,17 @@ export type MediaType = 'image' | 'video' | 'audio';
 export interface MediaAsset {
   id: string;
   user_id: string;
-  project_id?: string;
+  project_id?: string | null;
   title: string;
-  description?: string;
+  description?: string | null;
   media_type: MediaType;
   file_url: string;
-  thumbnail_url?: string;
-  duration?: number; // for video/audio in seconds
-  width?: number; // for images/videos
-  height?: number; // for images/videos
+  thumbnail_url?: string | null;
+  duration?: number | null; // for video/audio in seconds
+  width?: number | null; // for images/videos
+  height?: number | null; // for images/videos
   file_size: number; // in bytes
-  metadata?: Record<string, any>; // JSON for additional metadata
+  metadata?: Json; // JSON for additional metadata
   created_at: string;
   updated_at: string;
 }
@@ -166,11 +168,11 @@ export interface Track {
 export interface Clip {
   id: string;
   track_id: string;
-  media_asset_id?: string; // null for generated clips
+  media_asset_id?: string | null; // null for generated clips
   start_time: number; // in seconds, position in the timeline
   duration: number; // in seconds
   media_start_time: number; // in seconds, position in the original media
-  properties: Record<string, any>; // JSON for clip-specific properties (effects, transitions, etc.)
+  properties: Json; // JSON for clip-specific properties (effects, transitions, etc.)
   created_at: string;
   updated_at: string;
 }
